@@ -2,7 +2,7 @@
     Copyright (C) 2017 Senparc
 
     文件名：ErrorResult.cs
-    文件功能描述：情绪识别错误信心。
+    文件功能描述：情绪识别错误信息
 
 
     创建标识：Senparc - 20170306
