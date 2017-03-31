@@ -68,201 +68,6 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                 /*,version*/);
         }
 
-        //public string GetDownloadInfo(CodeRecord codeRecord)
-        //{
-        //    return string.Format(@"您已通过二维码验证，浏览器即将开始下载 Senparc.Weixin SDK 帮助文档。
-        //当前选择的版本：v{0}（{1}）
-
-        //我们期待您的意见和建议，客服热线：400-031-8816。
-
-        //感谢您对盛派网络的支持！
-
-        //© 2016 Senparc", codeRecord.Version, codeRecord.IsWebVersion ? "网页版" : ".chm文档版");
-        //}
-
-        //public override IResponseMessageBase OnTextOrEventRequest(RequestMessageText requestMessage)
-        //{
-        //    // 预处理文字或事件类型请求。
-        //    // 这个请求是一个比较特殊的请求，通常用于统一处理来自文字或菜单按钮的同一个执行逻辑，
-        //    // 会在执行OnTextRequest或OnEventRequest之前触发，具有以下一些特征：
-        //    // 1、如果返回null，则继续执行OnTextRequest或OnEventRequest
-        //    // 2、如果返回不为null，则终止执行OnTextRequest或OnEventRequest，返回最终ResponseMessage
-        //    // 3、如果是事件，则会将RequestMessageEvent自动转为RequestMessageText类型，其中RequestMessageText.Content就是RequestMessageEvent.EventKey
-
-        //    if (requestMessage.Content == "OneClick")
-        //    {
-        //        var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //        strongResponseMessage.Content = "您点击了底部按钮。\r\n为了测试微信软件换行bug的应对措施，这里做了一个——\r\n换行";
-        //        return strongResponseMessage;
-        //    }
-        //    return null;//返回null，则继续执行OnTextRequest或OnEventRequest
-        //}
-
-        //public override IResponseMessageBase OnEvent_ClickRequest(RequestMessageEvent_Click requestMessage)
-        //{
-        //    IResponseMessageBase reponseMessage = null;
-        //    //菜单点击，需要跟创建菜单时的Key匹配
-        //    switch (requestMessage.EventKey)
-        //    {
-        //        case "OneClick":
-        //            {
-        //                //这个过程实际已经在OnTextOrEventRequest中完成，这里不会执行到。
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Content = "您点击了底部按钮。\r\n为了测试微信软件换行bug的应对措施，这里做了一个——\r\n换行";
-        //            }
-        //            break;
-        //        case "SubClickRoot_Text":
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Content = "您点击了子菜单按钮。";
-        //            }
-        //            break;
-        //        case "SubClickRoot_News":
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageNews>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Articles.Add(new Article()
-        //                {
-        //                    Title = "您点击了子菜单图文按钮",
-        //                    Description = "您点击了子菜单图文按钮，这是一条图文信息。",
-        //                    PicUrl = "http://sdk.weixin.senparc.com/Images/qrcode.jpg",
-        //                    Url = "http://sdk.weixin.senparc.com"
-        //                });
-        //            }
-        //            break;
-        //        case "SubClickRoot_Music":
-        //            {
-        //                //上传缩略图
-        //                var accessToken = Containers.AccessTokenContainer.TryGetAccessToken(appId, appSecret);
-        //                var uploadResult = AdvancedAPIs.MediaApi.UploadTemporaryMedia(accessToken, UploadMediaFileType.thumb,
-        //                                                             Server.GetMapPath("~/Images/Logo.jpg"));
-        //                //设置音乐信息
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageMusic>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Music.Title = "天籁之音";
-        //                strongResponseMessage.Music.Description = "真的是天籁之音";
-        //                strongResponseMessage.Music.MusicUrl = "http://sdk.weixin.senparc.com/Content/music1.mp3";
-        //                strongResponseMessage.Music.HQMusicUrl = "http://sdk.weixin.senparc.com/Content/music1.mp3";
-        //                strongResponseMessage.Music.ThumbMediaId = uploadResult.thumb_media_id;
-        //            }
-        //            break;
-        //        case "SubClickRoot_Image":
-        //            {
-        //                //上传图片
-        //                var accessToken = Containers.AccessTokenContainer.TryGetAccessToken(appId, appSecret);
-        //                var uploadResult = AdvancedAPIs.MediaApi.UploadTemporaryMedia(accessToken, UploadMediaFileType.image,
-        //                                                             Server.GetMapPath("~/Images/Logo.jpg"));
-        //                //设置图片信息
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageImage>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Image.MediaId = uploadResult.media_id;
-        //            }
-        //            break;
-        //        case "SubClickRoot_Agent"://代理消息
-        //            {
-        //                //获取返回的XML
-        //                DateTime dt1 = DateTime.Now;
-        //                reponseMessage = MessageAgent.RequestResponseMessage(this, agentUrl, agentToken, RequestDocument.ToString());
-        //                //上面的方法也可以使用扩展方法：this.RequestResponseMessage(this,agentUrl, agentToken, RequestDocument.ToString());
-
-        //                DateTime dt2 = DateTime.Now;
-
-        //                if (reponseMessage is ResponseMessageNews)
-        //                {
-        //                    (reponseMessage as ResponseMessageNews)
-        //                        .Articles[0]
-        //                        .Description += string.Format("\r\n\r\n代理过程总耗时：{0}毫秒", (dt2 - dt1).Milliseconds);
-        //                }
-        //            }
-        //            break;
-        //        case "Member"://托管代理会员信息
-        //            {
-        //                //原始方法为：MessageAgent.RequestXml(this,agentUrl, agentToken, RequestDocument.ToString());//获取返回的XML
-        //                reponseMessage = this.RequestResponseMessage(agentUrl, agentToken, RequestDocument.ToString());
-        //            }
-        //            break;
-        //        case "OAuth"://OAuth授权测试
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageNews>();
-
-        //                strongResponseMessage.Articles.Add(new Article()
-        //                {
-        //                    Title = "OAuth2.0测试",
-        //                    Description = "选择下面两种不同的方式进行测试，区别在于授权成功后，最后停留的页面。",
-        //                    //Url = "http://sdk.weixin.senparc.com/oauth2",
-        //                    //PicUrl = "http://sdk.weixin.senparc.com/Images/qrcode.jpg"
-        //                });
-
-        //                strongResponseMessage.Articles.Add(new Article()
-        //                {
-        //                    Title = "OAuth2.0测试（不带returnUrl），测试环境可使用",
-        //                    Description = "OAuth2.0测试（不带returnUrl）",
-        //                    Url = "http://sdk.weixin.senparc.com/oauth2",
-        //                    PicUrl = "http://sdk.weixin.senparc.com/Images/qrcode.jpg"
-        //                });
-
-        //                var returnUrl = "/OAuth2/TestReturnUrl";
-        //                strongResponseMessage.Articles.Add(new Article()
-        //                {
-        //                    Title = "OAuth2.0测试（带returnUrl），生产环境强烈推荐使用",
-        //                    Description = "OAuth2.0测试（带returnUrl）",
-        //                    Url = "http://sdk.weixin.senparc.com/oauth2?returnUrl=" + returnUrl.UrlEncode(),
-        //                    PicUrl = "http://sdk.weixin.senparc.com/Images/qrcode.jpg"
-        //                });
-
-        //                reponseMessage = strongResponseMessage;
-
-        //            }
-        //            break;
-        //        case "Description":
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //                strongResponseMessage.Content = GetWelcomeInfo();
-        //                reponseMessage = strongResponseMessage;
-        //            }
-        //            break;
-        //        case "SubClickRoot_PicPhotoOrAlbum":
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Content = "您点击了【微信拍照】按钮。系统将会弹出拍照或者相册发图。";
-        //            }
-        //            break;
-        //        case "SubClickRoot_ScancodePush":
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Content = "您点击了【微信扫码】按钮。";
-        //            }
-        //            break;
-        //        case "ConditionalMenu_Male":
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Content = "您点击了个性化菜单按钮，您的微信性别设置为：男。";
-        //            }
-        //            break;
-        //        case "ConditionalMenu_Femle":
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //                reponseMessage = strongResponseMessage;
-        //                strongResponseMessage.Content = "您点击了个性化菜单按钮，您的微信性别设置为：女。";
-        //            }
-        //            break;
-        //        default:
-        //            {
-        //                var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-        //                strongResponseMessage.Content = "您点击了按钮，EventKey：" + requestMessage.EventKey;
-        //                reponseMessage = strongResponseMessage;
-        //            }
-        //            break;
-        //    }
-
-        //    return reponseMessage;
-        //}
-
         public override IResponseMessageBase OnEvent_EnterRequest(RequestMessageEvent_Enter requestMessage)
         {
             var responseMessage = ResponseMessageBase.CreateFromRequestMessage<ResponseMessageText>(requestMessage);
@@ -335,7 +140,6 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
 
             if (weixinUserInfo != null)
             {
-                SenparcContext senparcContent = new SenparcContext(connectionString);
 
                 var account = new Account()
                 {
@@ -351,9 +155,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                     HeadUrl = weixinUserInfo.headimgurl,
                     PicUrl = weixinUserInfo.headimgurl,
                 };
-                senparcContent.Accounts.Add(account);
-
-                senparcContent.SaveChanges();
+                SenparcMysqlContext.Accounts.Add(account);
+                SenparcMysqlContext.SaveChanges();
             }
 
 

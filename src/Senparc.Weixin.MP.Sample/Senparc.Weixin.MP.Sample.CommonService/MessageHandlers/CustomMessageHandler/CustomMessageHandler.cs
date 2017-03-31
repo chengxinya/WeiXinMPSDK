@@ -29,7 +29,15 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
         private readonly static string appId = "wxe273c3a02e09ff8c";
         private readonly static string appSecret = "631f30445f640e1a870f1ef79aa543bd";
         private readonly static string subscriptionKey = "";
-        private readonly static string connectionString = "server=localhost;uid=root;pwd=root;database=senparc";
+
+        private SenparcContext SenparcMysqlContext
+        {
+            get
+            {
+                return new SenparcContext("server=localhost;uid=root;pwd=root;database=senparc");
+            }
+        }
+
         /// <summary>
         /// 模板消息集合（Key：checkCode，Value：OpenId）
         /// </summary>
@@ -88,8 +96,7 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                 //TODO：保存数据
                 if (result != null)
                 {
-                    SenparcContext senparcContent = new SenparcContext(connectionString);
-                    var account = senparcContent.Accounts.FirstOrDefault(z => z.WeixinOpenId == requestMessage.ToUserName);
+                    var account = SenparcMysqlContext.Accounts.FirstOrDefault(z => z.WeixinOpenId == requestMessage.ToUserName);
                     if (account != null)
                     {
                         var cognitiveEmotion = new CognitiveEmotion()
@@ -99,8 +106,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                             PicUrl = requestMessage.PicUrl,
                             AddTime = DateTime.Now
                         };
-                        senparcContent.CognitiveEmotions.Add(cognitiveEmotion);
-                        senparcContent.SaveChanges();
+                        SenparcMysqlContext.CognitiveEmotions.Add(cognitiveEmotion);
+                        SenparcMysqlContext.SaveChanges();
                     }
                 }
             }
