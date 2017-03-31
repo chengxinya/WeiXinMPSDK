@@ -15,8 +15,7 @@ namespace Senparc.Weixin.MP.Sample
     public class Startup
     {
         public static SenparcWeixinSetting SenparcWeixin;
-        public static string SubscriptionKey = "";      //认知服务Key
-
+        public static string RootPath;
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -25,12 +24,11 @@ namespace Senparc.Weixin.MP.Sample
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
+            RootPath = env.ContentRootPath;
+
             //Senparc.Weixin.SDK 配置
             builder.AddJsonFile("SenparcWeixin.json", optional: true);
-
             Configuration = builder.Build();
-
-
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -78,7 +76,7 @@ namespace Senparc.Weixin.MP.Sample
             //app.ApplicationServices.GetRequiredService<SenparcContext>().Database.Migrate();
 
             //Senparc.Weixin SDK 配置
-            SenparcWeixinSetting setting = senparcWeixinSetting.Value;
+            SenparcWeixin = senparcWeixinSetting.Value;
             //app.UseMiddleware()
         }
     }

@@ -23,8 +23,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
     /// </summary>
     public partial class CustomMessageHandler : MessageHandler<CustomMessageContext>
     {
-        private string appId = "";
-        private string appSecret = "";
+        private string appId = "wxe273c3a02e09ff8c";
+        private string appSecret = "631f30445f640e1a870f1ef79aa543bd";
         private string subscriptionKey = "";
 
         /// <summary>
@@ -82,6 +82,7 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
             {
                 EmotionRecognitionImageService service = new EmotionRecognitionImageService(subscriptionKey);
                 result = service.DetectEmotion(requestMessage.PicUrl);
+                //TODO：保存数据
             }
             catch (System.Exception)
             {
