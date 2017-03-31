@@ -17,7 +17,7 @@ namespace Senparc.Weixin.MP.Sample.MySQL
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEntityFrameworkMySql()
-                .AddDbContext<SenparcContext>(x => x.UseMySql("server=localhost;uid=root;pwd=123456;database=senparc"));
+                .AddDbContext<SenparcContext>(x => x.UseMySql("server=localhost;uid=root;pwd=root;database=senparc"));
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

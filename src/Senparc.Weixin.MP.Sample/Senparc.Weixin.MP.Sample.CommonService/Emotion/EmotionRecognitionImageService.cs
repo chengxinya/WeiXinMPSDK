@@ -150,8 +150,56 @@ namespace Senparc.Weixin.MP.Sample.CommonService.Emotion
             _httpClient.DefaultRequestHeaders.Add(SubscriptionKeyName, subscriptionKey);
         }
 
+
+        #region 同步方法
         /// <summary>
         /// 
+        /// </summary>
+        /// <param name="imageUrl"></param>
+        /// <returns></returns>
+        public List<EmotionResult> DetectEmotion(string imageUrl)
+        {
+            var result = SendRequestAsync<object, List<EmotionResult>>(HttpMethod.Post, ServiceHost, new
+            {
+                url = imageUrl
+            });
+            return result.Result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="imageStream"></param>
+        /// <returns></returns>
+        public List<EmotionResult> DetectEmotion(Stream imageStream)
+        {
+            var result = SendRequestAsync<Stream, List<EmotionResult>>(HttpMethod.Post, ServiceHost, imageStream);
+            return result.Result;
+        }
+
+        #endregion
+
+        #region 异步方法
+        public async Task<List<EmotionResult>> DetectEmotionAsync(string imageUrl)
+        {
+            var result = await SendRequestAsync<object, List<EmotionResult>>(HttpMethod.Post, ServiceHost, new
+            {
+                url = imageUrl
+            });
+            return result;
+        }
+
+        public async Task<List<EmotionResult>> DetectEmotionAsync(Stream imageStream)
+        {
+            var result = await SendRequestAsync<Stream, List<EmotionResult>>(HttpMethod.Post, ServiceHost, imageStream);
+            return result;
+        }
+        #endregion
+
+
+
+        /// <summary>
+        /// 发送请求
         /// </summary>
         /// <typeparam name="TRequest"></typeparam>
         /// <param name="httpMethod"></param>
@@ -221,51 +269,6 @@ namespace Senparc.Weixin.MP.Sample.CommonService.Emotion
             return default(TResponse);
         }
 
-
-        #region 同步方法
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="imageUrl"></param>
-        /// <returns></returns>
-        public List<EmotionResult> DetectEmotion(string imageUrl)
-        {
-            var result = SendRequestAsync<object, List<EmotionResult>>(HttpMethod.Post, ServiceHost, new
-            {
-                url = imageUrl
-            });
-            return result.Result;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="imageStream"></param>
-        /// <returns></returns>
-        public List<EmotionResult> DetectEmotion(Stream imageStream)
-        {
-            var result = SendRequestAsync<Stream, List<EmotionResult>>(HttpMethod.Post, ServiceHost, imageStream);
-            return result.Result;
-        }
-
-        #endregion
-
-        #region 异步方法
-        public async Task<List<EmotionResult>> DetectEmotionAsync(string imageUrl)
-        {
-            var result = await SendRequestAsync<object, List<EmotionResult>>(HttpMethod.Post, ServiceHost, new
-            {
-                url = imageUrl
-            });
-            return result;
-        }
-
-        public async Task<List<EmotionResult>> DetectEmotionAsync(Stream imageStream)
-        {
-            var result = await SendRequestAsync<Stream, List<EmotionResult>>(HttpMethod.Post, ServiceHost, imageStream);
-            return result;
-        }
-        #endregion
 
         protected virtual void Dispose(bool disposing)
         {
