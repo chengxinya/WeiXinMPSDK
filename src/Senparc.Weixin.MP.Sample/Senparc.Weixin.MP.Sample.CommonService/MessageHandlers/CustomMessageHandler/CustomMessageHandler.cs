@@ -23,8 +23,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
     /// </summary>
     public partial class CustomMessageHandler : MessageHandler<CustomMessageContext>
     {
-        private string appId = ""; /*WebConfigurationManager.AppSettings["WeixinAppId"];*/
-        private string appSecret = "";/* WebConfigurationManager.AppSettings["WeixinAppSecret"];*/
+        private string appId = "";
+        private string appSecret = "";
         private string subscriptionKey = "";
 
         /// <summary>
