@@ -8,12 +8,15 @@
     创建标识：Senparc - 20170331
 ----------------------------------------------------------------*/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageHandlers;
 using Senparc.Weixin.MP.Sample.CommonService.Emotion;
+using Senparc.Weixin.MP.Sample.MySQL.Models;
 
 namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
 {
@@ -23,10 +26,10 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
     /// </summary>
     public partial class CustomMessageHandler : MessageHandler<CustomMessageContext>
     {
-        private string appId = "wxe273c3a02e09ff8c";
-        private string appSecret = "631f30445f640e1a870f1ef79aa543bd";
-        private string subscriptionKey = "";
-
+        private readonly static string appId = "wxe273c3a02e09ff8c";
+        private readonly static string appSecret = "631f30445f640e1a870f1ef79aa543bd";
+        private readonly static string subscriptionKey = "";
+        private readonly static string connectionString = "server=localhost;uid=root;pwd=root;database=senparc";
         /// <summary>
         /// 模板消息集合（Key：checkCode，Value：OpenId）
         /// </summary>
@@ -83,6 +86,23 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                 EmotionRecognitionImageService service = new EmotionRecognitionImageService(subscriptionKey);
                 result = service.DetectEmotion(requestMessage.PicUrl);
                 //TODO：保存数据
+                if (result != null)
+                {
+                    SenparcContext senparcContent = new SenparcContext(connectionString);
+                    var account = senparcContent.Accounts.FirstOrDefault(z => z.WeixinOpenId == requestMessage.ToUserName);
+                    if (account != null)
+                    {
+                        var cognitiveEmotion = new CognitiveEmotion()
+                        {
+                            AccountId = account.Id,
+                            ResultJson = Newtonsoft.Json.JsonConvert.SerializeObject(result),
+                            PicUrl = requestMessage.PicUrl,
+                            AddTime = DateTime.Now
+                        };
+                        senparcContent.CognitiveEmotions.Add(cognitiveEmotion);
+                        senparcContent.SaveChanges();
+                    }
+                }
             }
             catch (System.Exception)
             {
@@ -134,7 +154,7 @@ Url:{2}", requestMessage.Title, requestMessage.Description, requestMessage.Url);
         public override IResponseMessageBase OnEventRequest(IRequestMessageEventBase requestMessage)
         {
             var eventResponseMessage = base.OnEventRequest(requestMessage);//对于Event下属分类的重写方法，见：CustomerMessageHandler_Events.cs
-            //TODO: 对Event信息进行统一操作
+                                                                           //TODO: 对Event信息进行统一操作
             return eventResponseMessage;
         }
 

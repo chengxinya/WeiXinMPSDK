@@ -11,6 +11,8 @@
 using Senparc.Weixin.Exceptions;
 using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.AdvancedAPIs;
+using Senparc.Weixin.MP.Sample.MySQL.Models;
+using System;
 
 namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
 {
@@ -330,6 +332,30 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
 
             //获取用户信息
             var weixinUserInfo = UserApi.Info(appId, this.WeixinOpenId);
+
+            if (weixinUserInfo != null)
+            {
+                SenparcContext senparcContent = new SenparcContext(connectionString);
+
+                var account = new Account()
+                {
+                    UserName = weixinUserInfo.nickname,
+                    WeixinOpenId = weixinUserInfo.openid,
+                    Email = "",
+                    Password = "",
+                    PasswordSalt = "",
+                    AddTime = DateTime.Now,
+                    Sex = (Senparc.Weixin.MP.Sample.MySQL.Models.Sex)weixinUserInfo.sex,
+                    Country = weixinUserInfo.country,
+                    City = weixinUserInfo.city,
+                    HeadUrl = weixinUserInfo.headimgurl,
+                    PicUrl = weixinUserInfo.headimgurl,
+                };
+                senparcContent.Accounts.Add(account);
+
+                senparcContent.SaveChanges();
+            }
+
 
 
             responseMessage.Content = GetWelcomeInfo();

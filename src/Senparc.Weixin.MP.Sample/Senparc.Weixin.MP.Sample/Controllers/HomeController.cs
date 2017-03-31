@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Senparc.Weixin.Entities;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler;
 
@@ -22,6 +18,7 @@ namespace Senparc.Weixin.MP.Sample.Controllers
         [ActionName("Index")]
         public ActionResult Post(PostModel postModel)
         {
+            
             if (!CheckSignature.Check(postModel.Signature, postModel.Timestamp, postModel.Nonce, Token))
             {
                 return Content("参数错误！");

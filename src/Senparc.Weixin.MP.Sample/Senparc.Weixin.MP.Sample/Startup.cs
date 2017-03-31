@@ -48,7 +48,7 @@ namespace Senparc.Weixin.MP.Sample
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
-            IOptions<SenparcWeixinSetting> senparcWeixinSetting, SenparcContext senparcContent)
+            IOptions<SenparcWeixinSetting> senparcWeixinSetting)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -73,7 +73,7 @@ namespace Senparc.Weixin.MP.Sample
             });
 
             //迁移数据库
-            //app.ApplicationServices.GetRequiredService<SenparcContext>().Database.Migrate();
+            app.ApplicationServices.GetRequiredService<SenparcContext>().Database.Migrate();
 
             //Senparc.Weixin SDK 配置
             SenparcWeixin = senparcWeixinSetting.Value;
