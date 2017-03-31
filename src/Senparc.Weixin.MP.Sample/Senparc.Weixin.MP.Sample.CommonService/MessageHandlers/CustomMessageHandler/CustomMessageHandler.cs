@@ -13,6 +13,7 @@ using System.IO;
 using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageHandlers;
+using Senparc.Weixin.MP.Sample.CommonService.Emotion;
 
 namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
 {
@@ -22,10 +23,9 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
     /// </summary>
     public partial class CustomMessageHandler : MessageHandler<CustomMessageContext>
     {
-
-
         private string appId = ""; /*WebConfigurationManager.AppSettings["WeixinAppId"];*/
         private string appSecret = "";/* WebConfigurationManager.AppSettings["WeixinAppSecret"];*/
+        private string subscriptionKey = "";
 
         /// <summary>
         /// 模板消息集合（Key：checkCode，Value：OpenId）
@@ -35,15 +35,6 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
         public CustomMessageHandler(Stream inputStream, PostModel postModel, int maxRecordCount = 0)
             : base(inputStream, postModel, maxRecordCount)
         {
-            //这里设置仅用于测试，实际开发可以在外部更全局的地方设置，
-            //比如MessageHandler<MessageContext>.GlobalWeixinContext.ExpireMinutes = 3。
-            WeixinContext.ExpireMinutes = 3;
-
-            if (!string.IsNullOrEmpty(postModel.AppId))
-            {
-                appId = postModel.AppId;//通过第三方开放平台发送过来的请求
-            }
-
             //在指定条件下，不使用消息去重
             base.OmitRepeatedMessageFunc = requestMessage =>
             {
@@ -84,6 +75,22 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
         /// <returns></returns>
         public override IResponseMessageBase OnImageRequest(RequestMessageImage requestMessage)
         {
+            //TODO:调用表情识别接口
+            List<EmotionResult> result = null;
+            string description = "";
+            try
+            {
+                EmotionRecognitionImageService service = new EmotionRecognitionImageService(subscriptionKey);
+                result = service.DetectEmotion(requestMessage.PicUrl);
+            }
+            catch (System.Exception)
+            {
+                result = new List<EmotionResult>();
+            }
+            finally
+            {
+                description = result.Count > 0 ? Newtonsoft.Json.JsonConvert.SerializeObject(result) : "表情识别失败！";
+            }
             var responseMessage = CreateResponseMessage<ResponseMessageNews>();
             responseMessage.Articles.Add(new Article()
             {
@@ -94,8 +101,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
             });
             responseMessage.Articles.Add(new Article()
             {
-                Title = "第二条",
-                Description = "第二条带连接的内容",
+                Title = "表情识别信息",
+                Description = description,
                 PicUrl = requestMessage.PicUrl,
                 Url = "http://sdk.weixin.senparc.com"
             });
