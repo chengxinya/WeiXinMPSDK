@@ -26,8 +26,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
     /// </summary>
     public partial class CustomMessageHandler : MessageHandler<CustomMessageContext>
     {
-        private readonly static string appId = "wxe273c3a02e09ff8c";
-        private readonly static string appSecret = "631f30445f640e1a870f1ef79aa543bd";
+        private readonly static string appId = "";
+        private readonly static string appSecret = "";
         private readonly static string subscriptionKey = "";
 
         private SenparcContext SenparcMysqlContext
