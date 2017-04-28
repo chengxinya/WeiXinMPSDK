@@ -28,7 +28,7 @@ namespace Senparc.Weixin.MP.Sample
             RootPath = env.ContentRootPath;
 
             //Senparc.Weixin.SDK 配置
-            //builder.AddJsonFile("SenparcWeixin.json", optional: true);
+            builder.AddJsonFile("SenparcWeixin.json", optional: true);
             Configuration = builder.Build();
         }
 
@@ -41,14 +41,14 @@ namespace Senparc.Weixin.MP.Sample
             services.AddMvc();
 
             //Senparc.Weixin.MP.Sample.CommonService需要使用到
-            //services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.Configure<SenparcWeixinSetting>(Configuration.GetSection("SenparcWeixinSetting"));
-            //services.AddEntityFrameworkMySql()
-            //    .AddDbContext<SenparcContext>(x => x.UseMySql("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=test;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false"));
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.Configure<SenparcWeixinSetting>(Configuration.GetSection("SenparcWeixinSetting"));
+            services.AddEntityFrameworkMySql()
+                .AddDbContext<SenparcContext>(x => x.UseMySql("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=test;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)//, IOptions<SenparcWeixinSetting> senparcWeixinSetting
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IOptions<SenparcWeixinSetting> senparcWeixinSetting)
 
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -77,10 +77,10 @@ namespace Senparc.Weixin.MP.Sample
             //app.ApplicationServices.GetRequiredService<SenparcContext>().Database.Migrate();
 
             //注册微信
-            //AccessTokenContainer.Register(senparcWeixinSetting.Value.WeixinAppId, senparcWeixinSetting.Value.WeixinAppSecret);
+            AccessTokenContainer.Register(senparcWeixinSetting.Value.WeixinAppId, senparcWeixinSetting.Value.WeixinAppSecret);
 
             //Senparc.Weixin SDK 配置
-            //SenparcWeixin = senparcWeixinSetting.Value;
+            SenparcWeixin = senparcWeixinSetting.Value;
             //app.UseMiddleware()
             app.Run(async (context) =>
             {

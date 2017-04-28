@@ -26,3 +26,5 @@ packages/
 /src/Senparc.Weixin.MP.Sample/Senparc.Weixin.MP.Sample/.vscode
 /src/Senparc.Weixin.MP.BuildOutPut/.net4.5
 /src/Senparc.Weixin.MP/Senparc.Weixin.MP.Test/Config/test.config
+/src/Senparc.Weixin.MP.Sample/Senparc.Weixin.MP.Sample/Properties/PublishProfiles/SenparcSDKMysql - Web Deploy.pubxml
+/src/Senparc.Weixin.MP.Sample/Senparc.Weixin.MP.Sample/Properties/PublishProfiles/SenparcSDKMysql - FTP.pubxml
