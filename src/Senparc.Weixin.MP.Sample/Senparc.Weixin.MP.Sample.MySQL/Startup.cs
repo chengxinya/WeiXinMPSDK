@@ -17,9 +17,10 @@ namespace Senparc.Weixin.MP.Sample.MySQL
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEntityFrameworkMySql()
-                .AddDbContext<SenparcContext>(x => x.UseMySql("server=localhost;uid=root;pwd=root;database=senparc"));
+                .AddDbContext<SenparcContext>(x => x.UseMySql("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=test;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false"));
+
         }
-        
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole();
@@ -31,7 +32,6 @@ namespace Senparc.Weixin.MP.Sample.MySQL
 
             // Init the mysql database
             app.ApplicationServices.GetRequiredService<SenparcContext>().Database.Migrate();
-
             app.Run(async (context) =>
             {
                 await context.Response.WriteAsync("Hello World!");

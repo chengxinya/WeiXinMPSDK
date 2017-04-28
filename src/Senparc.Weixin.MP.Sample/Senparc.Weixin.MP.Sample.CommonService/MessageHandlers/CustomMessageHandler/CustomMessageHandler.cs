@@ -26,15 +26,15 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
     /// </summary>
     public partial class CustomMessageHandler : MessageHandler<CustomMessageContext>
     {
-        private readonly static string appId = "";
-        private readonly static string appSecret = "";
-        private readonly static string subscriptionKey = "";
+        private readonly static string appId = "wxe273c3a02e09ff8c";
+        private readonly static string appSecret = "631f30445f640e1a870f1ef79aa543bd";
+        private readonly static string subscriptionKey = "9368e4cd242c4761a7b5fe8e7087c0ca";
 
         private SenparcContext SenparcMysqlContext
         {
             get
             {
-                return new SenparcContext("server=localhost;uid=root;pwd=root;database=senparc");
+                return new SenparcContext("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=test;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false");
             }
         }
 
