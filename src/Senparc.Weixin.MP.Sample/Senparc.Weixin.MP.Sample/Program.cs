@@ -13,6 +13,7 @@ namespace Senparc.Weixin.MP.Sample
         {
             var host = new WebHostBuilder()
                 .UseKestrel()
+                .UseIISIntegration()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
