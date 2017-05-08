@@ -74,7 +74,6 @@ namespace Senparc.Weixin.MP.Sample.Controllers
                     Directory.CreateDirectory(logPath);
                 }
 
-
                 //测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。    
                 using (var fs = new FileStream(Path.Combine(logPath, string.Format("{0}_Request_{1}.txt", _getRandomFileName(), messageHandler.RequestMessage.FromUserName)), FileMode.CreateNew, FileAccess.ReadWrite))
                 {
@@ -98,10 +97,74 @@ namespace Senparc.Weixin.MP.Sample.Controllers
                 //执行微信处理过程
                 messageHandler.Execute();
 
+
+                #region 记录 Response 日志
+
+                //测试时可开启，帮助跟踪数据
+
+                //if (messageHandler.ResponseDocument == null)
+                //{
+                //    throw new Exception(messageHandler.RequestDocument.ToString());
+                //}
+                if (messageHandler.ResponseDocument != null)
+                {
+                    using (var fs = new FileStream(Path.Combine(logPath, string.Format("{0}_Response_{1}.txt", _getRandomFileName(), messageHandler.RequestMessage.FromUserName)), FileMode.CreateNew, FileAccess.ReadWrite))
+                    {
+                        messageHandler.ResponseDocument.Save(fs);
+                    }
+                }
+
+                if (messageHandler.UsingEcryptMessage && messageHandler.FinalResponseDocument != null)
+                {
+                    //记录加密后的响应信息
+                    using (var fs = new FileStream(Path.Combine(logPath, string.Format("{0}_Response_Final_{1}.txt", _getRandomFileName(), messageHandler.RequestMessage.FromUserName)), FileMode.CreateNew, FileAccess.ReadWrite))
+                    {
+                        messageHandler.FinalResponseDocument.Save(fs);
+                    }
+                }
+
+                #endregion
+
+
                 return Content(messageHandler.RequestDocument.ToString());
             }
             catch (Exception ex)
             {
+                #region 异常处理
+                WeixinTrace.Log("MessageHandler错误：{0}", ex.Message);
+
+
+                var logPath = Startup.RootPath + "/App_Data/Error_" + _getRandomFileName() + ".txt";
+
+                using (var fs = new FileStream(logPath, FileMode.CreateNew, FileAccess.ReadWrite))
+                {
+                    using (TextWriter tw = new StreamWriter(fs))
+                    {
+                        tw.WriteLine("ExecptionMessage:" + ex.Message);
+                        tw.WriteLine(ex.Source);
+                        tw.WriteLine(ex.StackTrace);
+                        //tw.WriteLine("InnerExecptionMessage:" + ex.InnerException.Message);
+
+                        if (messageHandler.ResponseDocument != null)
+                        {
+                            tw.WriteLine(messageHandler.ResponseDocument.ToString());
+                        }
+
+                        if (ex.InnerException != null)
+                        {
+                            tw.WriteLine("========= InnerException =========");
+                            tw.WriteLine(ex.InnerException.Message);
+                            tw.WriteLine(ex.InnerException.Source);
+                            tw.WriteLine(ex.InnerException.StackTrace);
+                        }
+
+                        tw.Flush();
+                        //tw.Close();
+                    }
+                }
+                #endregion
+
+
                 return Content("");
             }
         }
