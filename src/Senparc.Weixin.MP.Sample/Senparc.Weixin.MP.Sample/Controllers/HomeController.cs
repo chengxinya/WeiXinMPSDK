@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler;
+using System.Text;
 
 namespace Senparc.Weixin.MP.Sample.Controllers
 {
@@ -11,6 +12,7 @@ namespace Senparc.Weixin.MP.Sample.Controllers
         public const string Token = "weixin";
         public const string EncodingAESKey = "";
 
+        readonly Func<string> _getRandomFileName = () => DateTime.Now.ToString("yyyyMMdd-HHmmss") + Guid.NewGuid().ToString("n").Substring(0, 6);
 
         /// <summary>
         /// 微信后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://sdk.weixin.senparc.com/weixin
@@ -53,7 +55,13 @@ namespace Senparc.Weixin.MP.Sample.Controllers
             var maxRecordCount = 10;
 
             //自定义MessageHandler，对微信请求的详细判断操作都在这里面。
-            var messageHandler = new CustomMessageHandler(HttpContext.Request.Body, postModel, maxRecordCount);
+
+            string body = new StreamReader(Request.Body).ReadToEnd();           // log body
+
+            byte[] requestData = Encoding.UTF8.GetBytes(body);
+            Stream inputstream = new MemoryStream(requestData);
+
+            var messageHandler = new CustomMessageHandler(inputstream, postModel, maxRecordCount);
 
             try
             {
@@ -64,6 +72,21 @@ namespace Senparc.Weixin.MP.Sample.Controllers
                 if (!Directory.Exists(logPath))
                 {
                     Directory.CreateDirectory(logPath);
+                }
+
+
+                //测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。    
+                using (var fs = new FileStream(Path.Combine(logPath, string.Format("{0}_Request_{1}.txt", _getRandomFileName(), messageHandler.RequestMessage.FromUserName)), FileMode.CreateNew, FileAccess.ReadWrite))
+                {
+                    messageHandler.RequestDocument.Save(fs);
+                }
+
+                if (messageHandler.UsingEcryptMessage)
+                {
+                    using (var fs = new FileStream(Path.Combine(logPath, string.Format("{0}_Request_Ecrypt_{1}.txt", _getRandomFileName(), messageHandler.RequestMessage.FromUserName)), FileMode.CreateNew, FileAccess.ReadWrite))
+                    {
+                        messageHandler.EcryptRequestDocument.Save(fs);
+                    }
                 }
 
                 #endregion
