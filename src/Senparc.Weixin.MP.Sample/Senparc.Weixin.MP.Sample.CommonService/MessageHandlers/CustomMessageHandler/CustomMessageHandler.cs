@@ -17,6 +17,8 @@ using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageHandlers;
 using Senparc.Weixin.MP.Sample.CommonService.Emotion;
 using Senparc.Weixin.MP.Sample.MySQL.Models;
+using System.Threading.Tasks;
+using Senparc.Weixin.MP.AdvancedAPIs;
 
 namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
 {
@@ -27,14 +29,20 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
     public partial class CustomMessageHandler : MessageHandler<CustomMessageContext>
     {
         private readonly static string appId = "wxe273c3a02e09ff8c";
-        private readonly static string appSecret = "631f30445f640e1a870f1ef79aa543bd";
+        //private readonly static string appSecret = "631f30445f640e1a870f1ef79aa543bd";
         private readonly static string subscriptionKey = "9368e4cd242c4761a7b5fe8e7087c0ca";
+
+        SenparcContext senparcMysqlContext = null;
 
         private SenparcContext SenparcMysqlContext
         {
             get
             {
-                return new SenparcContext("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=test;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false");
+                if (senparcMysqlContext == null)
+                {
+                    senparcMysqlContext = new SenparcContext("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=senparc;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false");
+                }
+                return senparcMysqlContext;
             }
         }
 
@@ -86,9 +94,17 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
         /// <returns></returns>
         public override IResponseMessageBase OnImageRequest(RequestMessageImage requestMessage)
         {
+            //推送消息
+            Task.Factory.StartNew(async () =>
+            {
+                await CustomApi.SendTextAsync(appId, base.WeixinOpenId, "已收到您发送的图片，正在处理...");
+
+                await CustomApi.SendImageAsync(appId, base.WeixinOpenId, requestMessage.MediaId);
+            });
+
             //TODO:调用表情识别接口
             List<EmotionResult> result = null;
-            string description = "";
+            string description = null;
             try
             {
                 EmotionRecognitionImageService service = new EmotionRecognitionImageService(subscriptionKey);
@@ -96,7 +112,7 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                 //TODO：保存数据
                 if (result != null)
                 {
-                    var account = SenparcMysqlContext.Accounts.FirstOrDefault(z => z.WeixinOpenId == requestMessage.ToUserName);
+                    var account = SenparcMysqlContext.Accounts.FirstOrDefault(z => z.WeixinOpenId == WeixinOpenId);
                     if (account != null)
                     {
                         var cognitiveEmotion = new CognitiveEmotion()
@@ -111,30 +127,34 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                     }
                 }
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
                 result = new List<EmotionResult>();
+                description = ex.Message;
             }
             finally
             {
-                description = result.Count > 0 ? Newtonsoft.Json.JsonConvert.SerializeObject(result) : "表情识别失败！";
+                description = description ?? (result.Count > 0 ? Newtonsoft.Json.JsonConvert.SerializeObject(result) : "表情识别失败！");
             }
-            var responseMessage = CreateResponseMessage<ResponseMessageNews>();
-            responseMessage.Articles.Add(new Article()
-            {
-                Title = "您刚才发送了图片信息",
-                Description = "您发送的图片将会显示在边上",
-                PicUrl = requestMessage.PicUrl,
-                Url = "http://sdk.weixin.senparc.com"
-            });
-            responseMessage.Articles.Add(new Article()
-            {
-                Title = "表情识别信息",
-                Description = description,
-                PicUrl = requestMessage.PicUrl,
-                Url = "http://sdk.weixin.senparc.com"
-            });
+            //var responseMessage = CreateResponseMessage<ResponseMessageNews>();
+            //responseMessage.Articles.Add(new Article()
+            //{
+            //    Title = "您刚才发送了图片信息",
+            //    Description = "您发送的图片将会显示在边上",
+            //    PicUrl = requestMessage.PicUrl,
+            //    Url = "http://sdk.weixin.senparc.com"
+            //});
+            //responseMessage.Articles.Add(new Article()
+            //{
+            //    Title = "点击查看表情识别信息",
+            //    Description = description,
+            //    PicUrl = requestMessage.PicUrl,
+            //    Url = "http://sdk.weixin.senparc.com"
+            //});
 
+
+            var responseMessage = CreateResponseMessage<ResponseMessageText>();
+            responseMessage.Content = "您的表情结果：" + description;
             return responseMessage;
         }
 

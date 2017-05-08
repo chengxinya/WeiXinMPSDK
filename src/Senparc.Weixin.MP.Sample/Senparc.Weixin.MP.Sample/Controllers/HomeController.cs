@@ -126,7 +126,7 @@ namespace Senparc.Weixin.MP.Sample.Controllers
                 #endregion
 
 
-                return Content(messageHandler.RequestDocument.ToString());
+                return Content(messageHandler.ResponseDocument.ToString());
             }
             catch (Exception ex)
             {
