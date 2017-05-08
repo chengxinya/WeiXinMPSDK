@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*----------------------------------------------------------------
+    Copyright (C) 2017 Senparc
+    
+    文件名：XmlUtility.cs
+    文件功能描述：XML工具类
+    
+    
+    创建标识：Senparc - 20150703
+
+    ----------------------------------------------------------------*/
+
+
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
@@ -96,6 +108,5 @@ namespace Senparc.Weixin.XmlUtility
                 return XDocument.Load(xr);
             }
         }
-
     }
 }

@@ -54,14 +54,10 @@ namespace Senparc.Weixin.MP.Sample.Controllers
 
             var maxRecordCount = 10;
 
-            //自定义MessageHandler，对微信请求的详细判断操作都在这里面。
+            var inputStream = new MemoryStream();
+            Request.Body.CopyTo(inputStream);
 
-            string body = new StreamReader(Request.Body).ReadToEnd();           // log body
-
-            byte[] requestData = Encoding.UTF8.GetBytes(body);
-            Stream inputstream = new MemoryStream(requestData);
-
-            var messageHandler = new CustomMessageHandler(inputstream, postModel, maxRecordCount);
+            var messageHandler = new CustomMessageHandler(Request.Body, postModel, maxRecordCount);
 
             try
             {
