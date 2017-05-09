@@ -99,6 +99,9 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
             {
                 await CustomApi.SendTextAsync(appId, base.WeixinOpenId, "已收到您发送的图片，正在处理...");
 
+                await CustomApi.SendTextAsync(appId, base.WeixinOpenId, requestMessage.PicUrl);
+
+
                 await CustomApi.SendImageAsync(appId, base.WeixinOpenId, requestMessage.MediaId);
             });
 
@@ -108,7 +111,14 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
             try
             {
                 EmotionRecognitionImageService service = new EmotionRecognitionImageService(subscriptionKey);
+
+                //var ms = new MemoryStream();
+                //Senparc.Weixin.HttpUtility.Get.Download(requestMessage.PicUrl, ms);
+                //ms.Seek(0, SeekOrigin.Begin);
+                //result = service.DetectEmotion(ms);
+
                 result = service.DetectEmotion(requestMessage.PicUrl);
+
                 //TODO：保存数据
                 if (result != null)
                 {
