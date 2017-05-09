@@ -57,7 +57,7 @@ namespace Senparc.Weixin.MP.Sample.Controllers
             var inputStream = new MemoryStream();
             Request.Body.CopyTo(inputStream);
 
-            var messageHandler = new CustomMessageHandler(Request.Body, postModel, maxRecordCount);
+            var messageHandler = new CustomMessageHandler(inputStream, postModel, maxRecordCount);
 
             try
             {
