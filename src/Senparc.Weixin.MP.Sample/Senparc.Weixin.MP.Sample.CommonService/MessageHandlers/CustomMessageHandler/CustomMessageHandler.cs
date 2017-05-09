@@ -40,7 +40,7 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
             {
                 if (senparcMysqlContext == null)
                 {
-                    senparcMysqlContext = new SenparcContext("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=senparc;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false");
+                    senparcMysqlContext = new SenparcContext("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=test;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false");
                 }
                 return senparcMysqlContext;
             }
@@ -126,6 +126,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                         SenparcMysqlContext.SaveChanges();
                     }
                 }
+
+                //description = Newtonsoft.Json.JsonConvert.SerializeObject(result);
             }
             catch (System.Exception ex)
             {

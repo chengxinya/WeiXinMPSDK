@@ -5,10 +5,12 @@ namespace Senparc.Weixin.MP.Sample.MySQL.Models
     public class SenparcContext : DbContext
     {
         private readonly string _connectionString;
+
         public SenparcContext(string connection)
         {
-
+            _connectionString = connection;
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (_connectionString != null)
@@ -19,7 +21,9 @@ namespace Senparc.Weixin.MP.Sample.MySQL.Models
         }
 
         public SenparcContext(DbContextOptions opt) : base(opt)
-        { }
+        {
+
+        }
 
         public DbSet<Account> Accounts { get; set; }
 
