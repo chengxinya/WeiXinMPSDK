@@ -148,6 +148,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
             {
                 description = description ?? (result.Count > 0 ? Newtonsoft.Json.JsonConvert.SerializeObject(result) : "表情识别失败！");
             }
+
+
             //var responseMessage = CreateResponseMessage<ResponseMessageNews>();
             //responseMessage.Articles.Add(new Article()
             //{
