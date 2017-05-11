@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler;
 using System.Text;
+using Microsoft.Extensions.Options;
+using Senparc.Weixin.MP.Sample.MySQL.Models;
+using System.Linq;
+using Senparc.Weixin.MP.Sample.CommonService.Emotion;
+using System.Collections.Generic;
 
 namespace Senparc.Weixin.MP.Sample.Controllers
 {
@@ -11,8 +16,13 @@ namespace Senparc.Weixin.MP.Sample.Controllers
     {
         public const string Token = "weixin";
         public const string EncodingAESKey = "";
-
         readonly Func<string> _getRandomFileName = () => DateTime.Now.ToString("yyyyMMdd-HHmmss") + Guid.NewGuid().ToString("n").Substring(0, 6);
+        public SenparcContext _senparcContent;
+        public HomeController(SenparcContext senparcContent)
+        {
+            _senparcContent = senparcContent;
+        }
+
 
         /// <summary>
         /// 微信后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://sdk.weixin.senparc.com/weixin
@@ -166,10 +176,32 @@ namespace Senparc.Weixin.MP.Sample.Controllers
         }
 
 
-        public IActionResult About()
+        public IActionResult EmotionLog(int accountId)
         {
-            ViewData["Message"] = "Your application description page.";
+            var account = _senparcContent.Accounts.FirstOrDefault(z => z.Id == accountId);
+            var emotionResultJsonList = _senparcContent.CognitiveEmotions.Where(z => z.AccountId == accountId)
+                            .Select(z => z.ResultJson).ToList();
 
+            var emotionResultList = new List<EmotionResult>();
+            foreach (var emotionResultJson in emotionResultJsonList)
+            {
+                try
+                {
+                    var result = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EmotionResult>>(emotionResultJson);
+                    if (result.Count > 0)
+                    {
+                        emotionResultList.Add(result[0]);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
+
+            ViewData["EmotionResults"] = emotionResultList;
+            ViewData["HeadUrl"] = account?.HeadUrl;
+            ViewData["UserName"] = account?.UserName;
             return View();
         }
 

@@ -134,9 +134,18 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                         };
                         SenparcMysqlContext.CognitiveEmotions.Add(cognitiveEmotion);
                         SenparcMysqlContext.SaveChanges();
+
+                        var responseMessage = CreateResponseMessage<ResponseMessageNews>();
+                        responseMessage.Articles.Add(new Article()
+                        {
+                            Title = "点击查看表情识别信息",
+                            Description = description,
+                            PicUrl = requestMessage.PicUrl,
+                            Url = $"http://senparcsdkmysql.chinacloudsites.cn/Home/EmotionLog?accountId={account.Id}"
+                        });
+                        return responseMessage;
                     }
                 }
-
                 //description = Newtonsoft.Json.JsonConvert.SerializeObject(result);
             }
             catch (System.Exception ex)
@@ -158,18 +167,10 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
             //    PicUrl = requestMessage.PicUrl,
             //    Url = "http://sdk.weixin.senparc.com"
             //});
-            //responseMessage.Articles.Add(new Article()
-            //{
-            //    Title = "点击查看表情识别信息",
-            //    Description = description,
-            //    PicUrl = requestMessage.PicUrl,
-            //    Url = "http://sdk.weixin.senparc.com"
-            //});
 
-
-            var responseMessage = CreateResponseMessage<ResponseMessageText>();
-            responseMessage.Content = "您的表情结果：" + description;
-            return responseMessage;
+            var responseTestMessage = CreateResponseMessage<ResponseMessageText>();
+            responseTestMessage.Content = "您的表情结果：" + description;
+            return responseTestMessage;
         }
 
         /// <summary>

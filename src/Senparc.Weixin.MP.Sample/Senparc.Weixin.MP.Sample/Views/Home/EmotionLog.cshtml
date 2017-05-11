@@ -1,0 +1,44 @@
+﻿@using Senparc.Weixin.MP.Sample.CommonService.Emotion
+@using Senparc.Weixin.MP.Sample.MySQL.Models
+@{
+    ViewData["Title"] = "About";
+    var emotionLogList = ViewData["EmotionResults"] as List<EmotionResult>;
+}
+<div class="emotion-log-wrapper">
+    <div class="header">
+        <div>
+            <img src="@ViewData["HeadUrl"]" />
+            <p>@ViewData["UserName"] </p>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <td>生气</td>
+                <td>轻蔑</td>
+                <td>厌恶</td>
+                <td>害怕</td>
+                <td>高兴</td>
+                <td>伤心</td>
+                <td>惊喜</td>
+                <td>中立</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var emotionLog in emotionLogList)
+            {
+                <tr>
+                    <td>@emotionLog.Scores.Anger.ToString("0.00")</td>
+                    <td>@emotionLog.Scores.Contempt.ToString("0.00")</td>
+                    <td>@emotionLog.Scores.Disgust.ToString("0.00")</td>
+                    <td>@emotionLog.Scores.Fear.ToString("0.00")</td>
+                    <td>@emotionLog.Scores.Happiness.ToString("0.00")</td>
+                    <td>@emotionLog.Scores.Sadness.ToString("0.00")</td>
+                    <td>@emotionLog.Scores.Surprise.ToString("0.00")</td>
+                    <td>@emotionLog.Scores.Neutral.ToString("0.00")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

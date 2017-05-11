@@ -44,7 +44,7 @@ namespace Senparc.Weixin.MP.Sample
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<SenparcWeixinSetting>(Configuration.GetSection("SenparcWeixinSetting"));
             services.AddEntityFrameworkMySql()
-                .AddDbContext<SenparcContext>(x => x.UseMySql("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=senparc;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false"));
+                .AddDbContext<SenparcContext>(x => x.UseMySql("Server=senparcsdk.mysqldb.chinacloudapi.cn;Port=3306;Database=test;Uid=senparcsdk%mysql;Pwd=!@#EWQASD123;Connection Reset=false"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
