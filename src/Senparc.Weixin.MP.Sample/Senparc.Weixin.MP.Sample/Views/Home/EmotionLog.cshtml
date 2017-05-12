@@ -1,7 +1,7 @@
 ﻿@using Senparc.Weixin.MP.Sample.CommonService.Emotion
 @using Senparc.Weixin.MP.Sample.MySQL.Models
 @{
-    ViewData["Title"] = "About";
+    ViewData["Title"] = "Senparc.Weixin SDK + Azure MySQL";
     var emotionLogList = ViewData["EmotionResults"] as List<EmotionResult>;
 }
 <div class="emotion-log-wrapper">
@@ -14,6 +14,7 @@
     <table>
         <thead>
             <tr>
+                <td></td>
                 <td>生气</td>
                 <td>轻蔑</td>
                 <td>厌恶</td>
@@ -25,17 +26,22 @@
             </tr>
         </thead>
         <tbody>
+            @{ 
+                var i = 0;
+            }
             @foreach (var emotionLog in emotionLogList)
             {
+                i++;
                 <tr>
-                    <td>@emotionLog.Scores.Anger.ToString("0.00")</td>
-                    <td>@emotionLog.Scores.Contempt.ToString("0.00")</td>
-                    <td>@emotionLog.Scores.Disgust.ToString("0.00")</td>
-                    <td>@emotionLog.Scores.Fear.ToString("0.00")</td>
-                    <td>@emotionLog.Scores.Happiness.ToString("0.00")</td>
-                    <td>@emotionLog.Scores.Sadness.ToString("0.00")</td>
-                    <td>@emotionLog.Scores.Surprise.ToString("0.00")</td>
-                    <td>@emotionLog.Scores.Neutral.ToString("0.00")</td>
+                    <td>@(i).</td>
+                    <td>@emotionLog.Scores.Anger.ToString("p")</td>
+                    <td>@emotionLog.Scores.Contempt.ToString("p")</td>
+                    <td>@emotionLog.Scores.Disgust.ToString("p")</td>
+                    <td>@emotionLog.Scores.Fear.ToString("p")</td>
+                    <td>@emotionLog.Scores.Happiness.ToString("p")</td>
+                    <td>@emotionLog.Scores.Sadness.ToString("p")</td>
+                    <td>@emotionLog.Scores.Surprise.ToString("p")</td>
+                    <td>@emotionLog.Scores.Neutral.ToString("p")</td>
                 </tr>
             }
         </tbody>
