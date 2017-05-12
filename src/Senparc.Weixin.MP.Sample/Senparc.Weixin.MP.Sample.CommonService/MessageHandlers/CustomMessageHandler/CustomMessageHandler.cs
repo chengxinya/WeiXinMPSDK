@@ -28,7 +28,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
     /// </summary>
     public partial class CustomMessageHandler : MessageHandler<CustomMessageContext>
     {
-        private readonly static string appId = "wxe273c3a02e09ff8c";
+        //private readonly static string appId = "wxe273c3a02e09ff8c";
+        private readonly static string appId = "wxbe855a981c34aa3f";
         //private readonly static string appSecret = "631f30445f640e1a870f1ef79aa543bd";
         private readonly static string subscriptionKey = "9368e4cd242c4761a7b5fe8e7087c0ca";
 
@@ -111,40 +112,56 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
             try
             {
                 EmotionRecognitionImageService service = new EmotionRecognitionImageService(subscriptionKey);
-
-                //var ms = new MemoryStream();
-                //Senparc.Weixin.HttpUtility.Get.Download(requestMessage.PicUrl, ms);
-                //ms.Seek(0, SeekOrigin.Begin);
-                //result = service.DetectEmotion(ms);
-
                 result = service.DetectEmotion(requestMessage.PicUrl);
 
                 //TODO：保存数据
                 if (result != null)
                 {
                     var account = SenparcMysqlContext.Accounts.FirstOrDefault(z => z.WeixinOpenId == WeixinOpenId);
-                    if (account != null)
+                    if (account == null)
                     {
-                        var cognitiveEmotion = new CognitiveEmotion()
+                        //获取用户信息
+                        var weixinUserInfo = UserApi.Info(appId, this.WeixinOpenId);
+                        if (weixinUserInfo != null)
                         {
-                            AccountId = account.Id,
-                            ResultJson = Newtonsoft.Json.JsonConvert.SerializeObject(result),
-                            PicUrl = requestMessage.PicUrl,
-                            AddTime = DateTime.Now
-                        };
-                        SenparcMysqlContext.CognitiveEmotions.Add(cognitiveEmotion);
-                        SenparcMysqlContext.SaveChanges();
-
-                        var responseMessage = CreateResponseMessage<ResponseMessageNews>();
-                        responseMessage.Articles.Add(new Article()
-                        {
-                            Title = "点击查看表情识别信息",
-                            Description = description,
-                            PicUrl = requestMessage.PicUrl,
-                            Url = $"http://senparcsdkmysql.chinacloudsites.cn/Home/EmotionLog?accountId={account.Id}"
-                        });
-                        return responseMessage;
+                            account = new Account()
+                            {
+                                UserName = weixinUserInfo.nickname,
+                                WeixinOpenId = weixinUserInfo.openid,
+                                Email = "",
+                                Password = "",
+                                PasswordSalt = "",
+                                AddTime = DateTime.Now,
+                                Sex = (Senparc.Weixin.MP.Sample.MySQL.Models.Sex)weixinUserInfo.sex,
+                                Country = weixinUserInfo.country,
+                                City = weixinUserInfo.city,
+                                HeadUrl = weixinUserInfo.headimgurl,
+                                PicUrl = weixinUserInfo.headimgurl,
+                            };
+                            SenparcMysqlContext.Accounts.Add(account);
+                            SenparcMysqlContext.SaveChanges();
+                        }
                     }
+
+                    var cognitiveEmotion = new CognitiveEmotion()
+                    {
+                        AccountId = account.Id,
+                        ResultJson = Newtonsoft.Json.JsonConvert.SerializeObject(result),
+                        PicUrl = requestMessage.PicUrl,
+                        AddTime = DateTime.Now
+                    };
+                    SenparcMysqlContext.CognitiveEmotions.Add(cognitiveEmotion);
+                    SenparcMysqlContext.SaveChanges();
+
+                    var responseMessage = CreateResponseMessage<ResponseMessageNews>();
+                    responseMessage.Articles.Add(new Article()
+                    {
+                        Title = "点击查看表情识别信息",
+                        Description = description,
+                        PicUrl = requestMessage.PicUrl,
+                        Url = $"http://senparcsdkmysql.chinacloudsites.cn/Home/EmotionLog?accountId={account.Id}"
+                    });
+                    return responseMessage;
                 }
                 //description = Newtonsoft.Json.JsonConvert.SerializeObject(result);
             }
