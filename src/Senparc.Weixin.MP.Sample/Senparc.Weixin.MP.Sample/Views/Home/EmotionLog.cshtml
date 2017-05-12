@@ -33,15 +33,15 @@
             {
                 i++;
                 <tr>
-                    <td>@(i).</td>
-                    <td>@emotionLog.Scores.Anger.ToString("p")</td>
-                    <td>@emotionLog.Scores.Contempt.ToString("p")</td>
-                    <td>@emotionLog.Scores.Disgust.ToString("p")</td>
-                    <td>@emotionLog.Scores.Fear.ToString("p")</td>
-                    <td>@emotionLog.Scores.Happiness.ToString("p")</td>
-                    <td>@emotionLog.Scores.Sadness.ToString("p")</td>
-                    <td>@emotionLog.Scores.Surprise.ToString("p")</td>
-                    <td>@emotionLog.Scores.Neutral.ToString("p")</td>
+                    <td>@((i).</td>
+                    <td>@((emotionLog.Scores.Anger*100).ToString("0"))%</td>
+                    <td>@((emotionLog.Scores.Contempt*100).ToString("0"))%</td>
+                    <td>@((emotionLog.Scores.Disgust*100).ToString("0"))%</td>
+                    <td>@((emotionLog.Scores.Fear*100).ToString("0"))%</td>
+                    <td>@((emotionLog.Scores.Happiness*100).ToString("0"))%</td>
+                    <td>@((emotionLog.Scores.Sadness*100).ToString("0"))%</td>
+                    <td>@((emotionLog.Scores.Surprise*100).ToString("0"))%</td>
+                    <td>@((emotionLog.Scores.Neutral*100).ToString("0"))%</td>
                 </tr>
             }
         </tbody>
