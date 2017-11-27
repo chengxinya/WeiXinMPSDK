@@ -1,3 +1,5 @@
+> 说明： 此分支为 .NET Core 环境下的 [Pomelo.EntityFrameworkCore.MySql](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql) 框架集成演示分支，支持微软 Azure MySQL 数据库服务。
+
 # 目录
 * [微信C# SDK](#微信c-sdk--)
 * [资源](#资源)
